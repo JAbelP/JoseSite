@@ -4,9 +4,7 @@ import {
   Play,
   Heart,
   Facebook,
-  Twitter,
   Instagram,
-  Youtube,
   Cross,
   Users,
   BookOpen,
@@ -14,6 +12,7 @@ import {
   Volume2,
   VolumeX,
   ArrowUp,
+  ChevronDown,
 } from "lucide-react"
 import { Button } from "@/app/components/ui/button"
 import Image from "next/image"
@@ -27,6 +26,8 @@ export default function Home() {
   const [isPlaying, setIsPlaying] = useState(true)
   const [isMuted, setIsMuted] = useState(false)
   const videoSectionRef = useRef<HTMLDivElement>(null)
+  const [isDonationDropdownOpen, setIsDonationDropdownOpen] = useState(false)
+  const [isHeroDonationDropdownOpen, setIsHeroDonationDropdownOpen] = useState(false)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -57,6 +58,78 @@ export default function Home() {
     }
   }
 
+  const DonationDropdown = ({
+    isOpen,
+    onToggle,
+    onClose,
+  }: {
+    isOpen: boolean
+    onToggle: () => void
+    onClose: () => void
+  }) => {
+    useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+        const target = event.target as Element
+        if (!target.closest(".donation-dropdown")) {
+          onClose()
+        }
+      }
+
+      if (isOpen) {
+        document.addEventListener("click", handleClickOutside)
+      }
+
+      return () => {
+        document.removeEventListener("click", handleClickOutside)
+      }
+    }, [isOpen, onClose])
+
+    return (
+      <div className="donation-dropdown relative">
+        <Button className="w-full bg-secondary-500 text-white hover:bg-secondary-600 sm:w-auto" onClick={onToggle}>
+          Donar Ahora <Heart className="ml-2 h-4 w-4" /> <ChevronDown className="ml-1 h-3 w-3" />
+        </Button>
+
+        {isOpen && (
+          <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 z-50 sm:left-auto sm:right-0 sm:w-48">
+            <div className="py-2">
+              <button
+                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                onClick={() => {
+                  // Handle PayPal donation
+                  console.log("PayPal donation clicked")
+                  onClose()
+                }}
+              >
+                💳 PayPal
+              </button>
+              <button
+                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                onClick={() => {
+                  // Handle CashApp donation
+                  console.log("CashApp donation clicked")
+                  onClose()
+                }}
+              >
+                💰 CashApp
+              </button>
+              <button
+                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                onClick={() => {
+                  // Handle Zelle donation
+                  console.log("Zelle donation clicked")
+                  onClose()
+                }}
+              >
+                🏦 Zelle
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    )
+  }
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-primary-50 to-white">
       {/* Sticky Navigation Bar */}
@@ -69,7 +142,7 @@ export default function Home() {
           <div className="flex items-center">
             <Radio className="mr-3 h-6 w-6 text-white" />
             <div className="text-white">
-              <h3 className="text-sm font-semibold md:text-base">Radio Vida</h3>
+              <h3 className="text-sm font-semibold md:text-base">Radio Alaba A Dios</h3>
               <p className="text-xs text-primary-100">Transmisión En Vivo</p>
             </div>
           </div>
@@ -109,15 +182,20 @@ export default function Home() {
       <section className="relative w-full bg-[url('/hero-background.png')] bg-cover bg-center py-12 md:py-24">
         <div className="absolute inset-0 bg-primary-700/60"></div>
         <div className="container relative z-10 mx-auto flex flex-col items-center justify-center px-4 text-center">
-          <Image
-            src="/radio-logo.png"
-            alt="Radio Vida Logo"
-            width={180}
-            height={180}
-            // height={isMobile ? 120 : 180}
-            className="mb-4 rounded-full border-4 border-secondary-300 bg-white/90 p-2 md:mb-6"
-          />
-          <h1 className="mb-1 font-serif text-3xl font-bold text-white md:mb-2 md:text-6xl">Radio Vida</h1>
+          {/* Simplified Centered Logo */}
+          <div className="mb-6 flex justify-center md:mb-8">
+            <div className="relative h-32 w-32 overflow-hidden rounded-full bg-white shadow-lg md:h-48 md:w-48 lg:h-56 lg:w-56">
+              <Image
+                src="/Logo.jpg"
+                alt="Radio Alaba A Dios Logo"
+                fill
+                sizes="(max-width: 768px) 128px, (max-width: 1024px) 192px, 224px"
+                className="object-cover object-center"
+                priority
+              />
+            </div>
+          </div>
+          <h1 className="mb-1 font-serif text-3xl font-bold text-white md:mb-2 md:text-6xl">Radio Alaba A Dios </h1>
           <p className="mb-6 text-lg text-secondary-200 md:mb-8 md:text-2xl">La Voz de Fe y Esperanza</p>
           <div className="flex w-full max-w-xs flex-col gap-3 sm:max-w-none sm:flex-row sm:justify-center sm:gap-4">
             <Button
@@ -131,12 +209,11 @@ export default function Home() {
             >
               Escuchar Ahora <Play className="ml-2 h-4 w-4" />
             </Button>
-            <Button
-              variant="outline"
-              className="w-full border-white bg-white/20 text-white hover:bg-white/30 hover:text-white sm:w-auto"
-            >
-              Donar Ahora <Heart className="ml-2 h-4 w-4" />
-            </Button>
+            <DonationDropdown
+              isOpen={isHeroDonationDropdownOpen}
+              onToggle={() => setIsHeroDonationDropdownOpen(!isHeroDonationDropdownOpen)}
+              onClose={() => setIsHeroDonationDropdownOpen(false)}
+            />
           </div>
         </div>
       </section>
@@ -152,7 +229,7 @@ export default function Home() {
             {/* Radio Stream */}
             <div ref={videoSectionRef} className="mb-8 rounded-xl bg-white p-4 shadow-lg md:p-6">
               <h3 className="mb-4 text-center font-serif text-xl font-bold text-primary-700 md:text-2xl">
-                Radio Vida - En Vivo
+                Radio Alaba A Dios - En Vivo
               </h3>
               <div className="relative overflow-hidden rounded-lg bg-black">
                 <iframe
@@ -168,7 +245,7 @@ export default function Home() {
                   frameBorder="0"
                   scrolling="no"
                   allowFullScreen
-                  title="Radio Vida - Transmisión En Vivo"
+                  title="Radio Alaba A Dios  - Transmisión En Vivo"
                   className="w-full"
                 />
               </div>
@@ -195,7 +272,7 @@ export default function Home() {
                   // height={isMobile ? "300" : "400"}
                   frameBorder="0"
                   scrolling="no"
-                  title="Radio Vida - Chat Comunitario"
+                  title="Radio Alaba A Dios  - Chat Comunitario"
                   className="w-full"
                 />
               </div>
@@ -262,52 +339,60 @@ export default function Home() {
               <div className="grid gap-4 md:grid-cols-4">
                 {/* Artist 1 */}
                 <div className="rounded-lg bg-white p-3 text-center shadow-sm transition-all hover:shadow md:p-4">
-                  <Image
-                    src="/placeholder.svg?height=120&width=120"
-                    alt="Marcos Witt"
-                    width={80}
-                    height={80}
-                    className="mx-auto mb-2 rounded-full"
-                  />
+                  <div className="mx-auto mb-2 h-20 w-20 overflow-hidden rounded-full bg-gray-200">
+                    <Image
+                      src="/MarcosWitt.jpeg"
+                      alt="Marcos Witt"
+                      width={80}
+                      height={80}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
                   <h3 className="font-medium text-primary-800">Marcos Witt</h3>
                   <p className="text-xs text-primary-600">Alabanza y Adoración</p>
                 </div>
 
                 {/* Artist 2 */}
                 <div className="rounded-lg bg-white p-3 text-center shadow-sm transition-all hover:shadow md:p-4">
-                  <Image
-                    src="/placeholder.svg?height=120&width=120"
-                    alt="Jesús Adrián Romero"
-                    width={80}
-                    height={80}
-                    className="mx-auto mb-2 rounded-full"
-                  />
+                  <div className="mx-auto mb-2 h-20 w-20 overflow-hidden rounded-full bg-gray-200">
+                    <Image
+                      src="/JesusAdrianRomero.png"
+                      alt="Jesús Adrián Romero"
+                      width={80}
+                      height={80}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
                   <h3 className="font-medium text-primary-800">Jesús Adrián Romero</h3>
                   <p className="text-xs text-primary-600">Música Contemporánea</p>
                 </div>
 
                 {/* Artist 3 */}
                 <div className="rounded-lg bg-white p-3 text-center shadow-sm transition-all hover:shadow md:p-4">
-                  <Image
-                    src="/placeholder.svg?height=120&width=120"
-                    alt="Christine D'Clario"
-                    width={80}
-                    height={80}
-                    className="mx-auto mb-2 rounded-full"
-                  />
-                  <h3 className="font-medium text-primary-800">Christine D&lsquo;Clario</h3>
+                  <div className="mx-auto mb-2 h-20 w-20 overflow-hidden rounded-full bg-gray-200">
+                    <Image
+                      src="/Nancy.jpg"
+                      alt="Nancy Cintrón"
+                      width={80}
+                      height={80}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <h3 className="font-medium text-primary-800">Nancy Cintrón</h3>
                   <p className="text-xs text-primary-600">Adoración</p>
                 </div>
 
                 {/* Artist 4 */}
                 <div className="rounded-lg bg-white p-3 text-center shadow-sm transition-all hover:shadow md:p-4">
-                  <Image
-                    src="/placeholder.svg?height=120&width=120"
-                    alt="Miel San Marcos"
-                    width={80}
-                    height={80}
-                    className="mx-auto mb-2 rounded-full"
-                  />
+                  <div className="mx-auto mb-2 h-20 w-20 overflow-hidden rounded-full bg-gray-200">
+                    <Image
+                      src="/MielSanMarcos.jpg"
+                      alt="Miel San Marcos"
+                      width={80}
+                      height={80}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
                   <h3 className="font-medium text-primary-800">Miel San Marcos</h3>
                   <p className="text-xs text-primary-600">Grupo de Alabanza</p>
                 </div>
@@ -355,7 +440,11 @@ export default function Home() {
             Tu apoyo nos permite continuar llevando el mensaje de fe y esperanza a nuestra comunidad hispana.
           </p>
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
-            <Button className="w-full bg-secondary-500 text-white hover:bg-secondary-600 sm:w-auto">Donar Ahora</Button>
+            <DonationDropdown
+              isOpen={isDonationDropdownOpen}
+              onToggle={() => setIsDonationDropdownOpen(!isDonationDropdownOpen)}
+              onClose={() => setIsDonationDropdownOpen(false)}
+            />
             <Button
               variant="outline"
               className="w-full border-white bg-white/10 text-white hover:bg-white/20 hover:text-white sm:w-auto"
@@ -367,15 +456,15 @@ export default function Home() {
             <Link href="#" className="flex items-center justify-center text-white hover:text-secondary-200">
               <Facebook className="mr-2 h-5 w-5" /> Facebook
             </Link>
-            <Link href="#" className="flex items-center justify-center text-white hover:text-secondary-200">
-              <Twitter className="mr-2 h-5 w-5" /> Twitter
-            </Link>
+            {/* <Link href="#" className="flex items-center justify-center text-white hover:text-secondary-200">
+                 <Twitter className="mr-2 h-5 w-5" /> Twitter 
+                </Link> */}
             <Link href="#" className="flex items-center justify-center text-white hover:text-secondary-200">
               <Instagram className="mr-2 h-5 w-5" /> Instagram
             </Link>
-            <Link href="#" className="flex items-center justify-center text-white hover:text-secondary-200">
+            {/* <Link href="#" className="flex items-center justify-center text-white hover:text-secondary-200">
               <Youtube className="mr-2 h-5 w-5" /> YouTube
-            </Link>
+            </Link> */}
           </div>
         </div>
       </section>
@@ -383,8 +472,10 @@ export default function Home() {
       {/* Footer */}
       <footer className="bg-primary-900 py-6 text-primary-200 md:py-8">
         <div className="container mx-auto px-4 text-center">
-          <p className="mb-3 text-sm md:mb-4 md:text-base">Radio Vida - La Voz de Fe y Esperanza</p>
-          <p className="text-xs md:text-sm">© {new Date().getFullYear()} Radio Vida. Todos los derechos reservados.</p>
+          <p className="mb-3 text-sm md:mb-4 md:text-base">Radio Alaba A Dios - En Todo Tiempo Alaba a Dios</p>
+          <p className="text-xs md:text-sm">
+            © {new Date().getFullYear()} Radio Alaba A Dios . Todos los derechos reservados.
+          </p>
           <p className="mt-2 text-xs">
             <Link href="#" className="hover:text-white">
               Política de Privacidad

@@ -6,7 +6,7 @@ import { ThemeProvider } from "@/app/components/theme-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata = {
-  title: "Radio Alaba a Dios - La Voz de Fe y Esperanza",
+  title: "Radio Alaba a Dios - En Todo Tiempo Alaba a DiosLa Voz de Fe y Esperanza",
   description: "Estación de radio cristiana hispana con música, programas y contenido inspirador",
 }
 
