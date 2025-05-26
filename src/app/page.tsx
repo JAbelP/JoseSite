@@ -26,8 +26,114 @@ export default function Home() {
   const [isPlaying, setIsPlaying] = useState(true)
   const [isMuted, setIsMuted] = useState(false)
   const videoSectionRef = useRef<HTMLDivElement>(null)
+  const iframeRef = useRef<HTMLIFrameElement>(null)
   const [isDonationDropdownOpen, setIsDonationDropdownOpen] = useState(false)
   const [isHeroDonationDropdownOpen, setIsHeroDonationDropdownOpen] = useState(false)
+  const [isIframeReady, setIsIframeReady] = useState(false)
+
+  const sendMessageToIframe = (action: string) => {
+    if (iframeRef.current && isIframeReady) {
+      try {
+        const message = {
+          action: action,
+          target: 'player'
+        };
+        iframeRef.current.contentWindow?.postMessage(message, '*');
+      } catch (error) {
+        console.error('Error sending message to iframe:', error);
+      }
+    }
+  };
+
+  const togglePlayPause = () => {
+    // Always try to send the message, regardless of isIframeReady
+    if (iframeRef.current) {
+      try {
+        iframeRef.current.contentWindow?.postMessage(
+          { action: isPlaying ? 'pause' : 'play', target: 'player' },
+          '*'
+        );
+      } catch (error) {
+        console.error('Error sending play/pause to iframe:', error);
+      }
+    }
+    setIsPlaying(!isPlaying);
+  };
+
+  const toggleMute = () => {
+    sendMessageToIframe(isMuted ? 'unmute' : 'mute');
+    setIsMuted(!isMuted);
+  };
+
+  // Update message listener for iframe responses
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      // Accept messages from any origin since ministeriotv might use different domains
+      if (event.data && typeof event.data === 'object') {
+        console.log('Message from iframe:', event.data);
+        
+        // Handle ready event
+        if (event.data.event === 'ready') {
+          setIsIframeReady(true);
+        }
+        
+        // Handle player state changes
+        if (event.data.event === 'stateChange') {
+          if (event.data.state === 'playing') {
+            setIsPlaying(true);
+          } else if (event.data.state === 'paused') {
+            setIsPlaying(false);
+          }
+        }
+        
+        // Handle volume changes
+        if (event.data.event === 'volumeChange') {
+          setIsMuted(event.data.muted);
+        }
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [])
+
+  // Add this effect to set iframe ready as soon as it loads
+  useEffect(() => {
+    const handleIframeLoad = () => {
+      setIsIframeReady(true);
+    };
+    const iframe = iframeRef.current;
+    if (iframe) {
+      iframe.addEventListener('load', handleIframeLoad);
+    }
+    return () => {
+      if (iframe) {
+        iframe.removeEventListener('load', handleIframeLoad);
+      }
+    };
+  }, []);
+
+  // DEBUG: Test postMessage communication with the iframe
+  useEffect(() => {
+    const testMessage = () => {
+      if (iframeRef.current) {
+        try {
+          console.log("Sending test message to iframe...");
+          iframeRef.current.contentWindow?.postMessage(
+            { test: "ping", time: Date.now() },
+            "*"
+          );
+        } catch (error) {
+          console.error("Error sending test message to iframe:", error);
+        }
+      }
+    };
+
+    // Send test message 2 seconds after mount
+    const timeout = setTimeout(testMessage, 2000);
+
+    return () => clearTimeout(timeout);
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -37,16 +143,17 @@ export default function Home() {
       {
         threshold: 0.1,
         rootMargin: "-50px 0px 0px 0px",
-      },
+      }
     )
 
-    if (videoSectionRef.current) {
-      observer.observe(videoSectionRef.current)
+    const currentRef = videoSectionRef.current;
+    if (currentRef) {
+      observer.observe(currentRef)
     }
 
     return () => {
-      if (videoSectionRef.current) {
-        observer.unobserve(videoSectionRef.current)
+      if (currentRef) {
+        observer.unobserve(currentRef)
       }
     }
   }, [])
@@ -134,45 +241,26 @@ export default function Home() {
     <main className="min-h-screen bg-gradient-to-b from-primary-50 to-white">
       {/* Sticky Navigation Bar */}
       <div
-        className={`fixed left-0 right-0 top-0 z-50 transform bg-gradient-to-r from-primary-700 to-primary-800 px-4 py-3 shadow-lg transition-transform duration-300 ease-in-out ${
+        className={`fixed left-0 right-0 top-0 z-50 transform bg-gradient-to-r from-primary-700 to-primary-800 px-4 py-5 shadow-lg transition-transform duration-300 ease-in-out ${
           !isVideoVisible ? "translate-y-0" : "-translate-y-full"
         }`}
       >
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center">
-            <Radio className="mr-3 h-6 w-6 text-white" />
+            <Radio className="mr-3 h-7 w-7 text-white" />
             <div className="text-white">
-              <h3 className="text-sm font-semibold md:text-base">Radio Alaba A Dios</h3>
-              <p className="text-xs text-primary-100">Transmisión En Vivo</p>
+              <h3 className="text-base font-semibold md:text-lg">Radio Alaba A Dios</h3>
+              <p className="text-sm text-primary-100">Transmisión En Vivo</p>
             </div>
           </div>
-
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
             <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 bg-white/10 text-white hover:bg-white/20 md:h-10 md:w-10"
-              onClick={() => setIsPlaying(!isPlaying)}
-            >
-              {isPlaying ? <Radio className="h-4 w-4 md:h-5 md:w-5" /> : <Play className="h-4 w-4 md:h-5 md:w-5" />}
-            </Button>
-
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 bg-white/10 text-white hover:bg-white/20 md:h-10 md:w-10"
-              onClick={() => setIsMuted(!isMuted)}
-            >
-              {isMuted ? <VolumeX className="h-4 w-4 md:h-5 md:w-5" /> : <Volume2 className="h-4 w-4 md:h-5 md:w-5" />}
-            </Button>
-
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 bg-white/10 text-white hover:bg-white/20 md:h-10"
+              variant="solid"
+              size="lg"
+              className="bg-secondary-500 text-white hover:bg-secondary-600 px-6 py-3 rounded-lg text-base font-semibold shadow"
               onClick={scrollToVideo}
             >
-              <ArrowUp className="mr-1 h-4 w-4 md:mr-2" />
+              Regresar al Radio
             </Button>
           </div>
         </div>
@@ -233,18 +321,20 @@ export default function Home() {
               </h3>
               <div className="relative overflow-hidden rounded-lg bg-black">
                 <iframe
+                  ref={iframeRef}
                   style={{
-                    maxWidth: "100%",
+                    maxWidth: "640px",
+                    width: "100%",
                     display: "block",
-                    margin: "auto",
+                    margin: "auto"
                   }}
-                  src="https://www.ministeriotv.com/streams/emVjsMinisteriotv.php?ch=205"
-                  width="100%"
-                  height={"360"}
-                  // height={isMobile ? "250" : "360"}
+                  src="https://www.ministeriotv.com/home/ejwM/205"
+                  width="640"
+                  height="360"
                   frameBorder="0"
                   scrolling="no"
                   allowFullScreen
+                  allow="autoplay"
                   title="Radio Alaba A Dios  - Transmisión En Vivo"
                   className="w-full"
                 />
