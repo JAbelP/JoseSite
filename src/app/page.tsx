@@ -20,15 +20,11 @@ import { useState, useEffect, useRef } from "react"
 
 export default function Home() {
   const [isVideoVisible, setIsVideoVisible] = useState(true)
-  // const [isPlaying, setIsPlaying] = useState(true)
-  // const [isMuted, setIsMuted] = useState(false)
   const videoSectionRef = useRef<HTMLDivElement>(null)
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [isDonationDropdownOpen, setIsDonationDropdownOpen] = useState(false)
   const [isHeroDonationDropdownOpen, setIsHeroDonationDropdownOpen] = useState(false)
-  // const [isIframeReady, setIsIframeReady] = useState(false)
 
-  // const sendMessageToIframe = (action: string) => {
   //   if (iframeRef.current && isIframeReady) {
   //     try {
   //       const message = {
@@ -63,74 +59,8 @@ export default function Home() {
   // };
 
   // Update message listener for iframe responses
-  useEffect(() => {
-    const handleMessage = (event: MessageEvent) => {
-      // Accept messages from any origin since ministeriotv might use different domains
-      if (event.data && typeof event.data === 'object') {
-        console.log('Message from iframe:', event.data);
-        
-        // Handle ready event
-        if (event.data.event === 'ready') {
-          setIsIframeReady(true);
-        }
-        
-        // Handle player state changes
-        if (event.data.event === 'stateChange') {
-          if (event.data.state === 'playing') {
-            setIsPlaying(true);
-          } else if (event.data.state === 'paused') {
-            setIsPlaying(false);
-          }
-        }
-        
-        // Handle volume changes
-        if (event.data.event === 'volumeChange') {
-          setIsMuted(event.data.muted);
-        }
-      }
-    };
 
-    window.addEventListener('message', handleMessage);
-    return () => window.removeEventListener('message', handleMessage);
-  }, [])
 
-  // Add this effect to set iframe ready as soon as it loads
-  useEffect(() => {
-    const handleIframeLoad = () => {
-      setIsIframeReady(true);
-    };
-    const iframe = iframeRef.current;
-    if (iframe) {
-      iframe.addEventListener('load', handleIframeLoad);
-    }
-    return () => {
-      if (iframe) {
-        iframe.removeEventListener('load', handleIframeLoad);
-      }
-    };
-  }, []);
-
-  // DEBUG: Test postMessage communication with the iframe
-  useEffect(() => {
-    const testMessage = () => {
-      if (iframeRef.current) {
-        try {
-          console.log("Sending test message to iframe...");
-          iframeRef.current.contentWindow?.postMessage(
-            { test: "ping", time: Date.now() },
-            "*"
-          );
-        } catch (error) {
-          console.error("Error sending test message to iframe:", error);
-        }
-      }
-    };
-
-    // Send test message 2 seconds after mount
-    const timeout = setTimeout(testMessage, 2000);
-
-    return () => clearTimeout(timeout);
-  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
