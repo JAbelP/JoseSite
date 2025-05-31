@@ -20,27 +20,27 @@ import { useState, useEffect, useRef } from "react"
 
 export default function Home() {
   const [isVideoVisible, setIsVideoVisible] = useState(true)
-  const [isPlaying, setIsPlaying] = useState(true)
-  const [isMuted, setIsMuted] = useState(false)
+  // const [isPlaying, setIsPlaying] = useState(true)
+  // const [isMuted, setIsMuted] = useState(false)
   const videoSectionRef = useRef<HTMLDivElement>(null)
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [isDonationDropdownOpen, setIsDonationDropdownOpen] = useState(false)
   const [isHeroDonationDropdownOpen, setIsHeroDonationDropdownOpen] = useState(false)
-  const [isIframeReady, setIsIframeReady] = useState(false)
+  // const [isIframeReady, setIsIframeReady] = useState(false)
 
-  const sendMessageToIframe = (action: string) => {
-    if (iframeRef.current && isIframeReady) {
-      try {
-        const message = {
-          action: action,
-          target: 'player'
-        };
-        iframeRef.current.contentWindow?.postMessage(message, '*');
-      } catch (error) {
-        console.error('Error sending message to iframe:', error);
-      }
-    }
-  };
+  // const sendMessageToIframe = (action: string) => {
+  //   if (iframeRef.current && isIframeReady) {
+  //     try {
+  //       const message = {
+  //         action: action,
+  //         target: 'player'
+  //       };
+  //       iframeRef.current.contentWindow?.postMessage(message, '*');
+  //     } catch (error) {
+  //       console.error('Error sending message to iframe:', error);
+  //     }
+  //   }
+  // };
 
   // const togglePlayPause = () => {
   //   // Always try to send the message, regardless of isIframeReady
