@@ -9,9 +9,6 @@ import {
   Users,
   BookOpen,
   Radio,
-  Volume2,
-  VolumeX,
-  ArrowUp,
   ChevronDown,
 } from "lucide-react"
 import { Button } from "@/app/components/ui/button"
@@ -45,25 +42,25 @@ export default function Home() {
     }
   };
 
-  const togglePlayPause = () => {
-    // Always try to send the message, regardless of isIframeReady
-    if (iframeRef.current) {
-      try {
-        iframeRef.current.contentWindow?.postMessage(
-          { action: isPlaying ? 'pause' : 'play', target: 'player' },
-          '*'
-        );
-      } catch (error) {
-        console.error('Error sending play/pause to iframe:', error);
-      }
-    }
-    setIsPlaying(!isPlaying);
-  };
+  // const togglePlayPause = () => {
+  //   // Always try to send the message, regardless of isIframeReady
+  //   if (iframeRef.current) {
+  //     try {
+  //       iframeRef.current.contentWindow?.postMessage(
+  //         { action: isPlaying ? 'pause' : 'play', target: 'player' },
+  //         '*'
+  //       );
+  //     } catch (error) {
+  //       console.error('Error sending play/pause to iframe:', error);
+  //     }
+  //   }
+  //   setIsPlaying(!isPlaying);
+  // };
 
-  const toggleMute = () => {
-    sendMessageToIframe(isMuted ? 'unmute' : 'mute');
-    setIsMuted(!isMuted);
-  };
+  // const toggleMute = () => {
+  //   sendMessageToIframe(isMuted ? 'unmute' : 'mute');
+  //   setIsMuted(!isMuted);
+  // };
 
   // Update message listener for iframe responses
   useEffect(() => {
