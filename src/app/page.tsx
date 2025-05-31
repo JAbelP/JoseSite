@@ -182,7 +182,7 @@ export default function Home() {
           </div>
           <div className="flex items-center gap-4">
             <Button
-              variant="solid"
+              variant="default"
               size="lg"
               className="bg-secondary-500 text-white hover:bg-secondary-600 px-6 py-3 rounded-lg text-base font-semibold shadow"
               onClick={scrollToVideo}
