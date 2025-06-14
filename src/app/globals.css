@@ -76,3 +76,68 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Slower speed class options */
+.scroll-speed-slow {
+  animation: scroll 45s linear infinite;
+}
+
+.scroll-speed-medium {
+  animation: scroll 30s linear infinite;
+}
+
+.scroll-speed-fast {
+  animation: scroll 15s linear infinite;
+}
+
+/* Optional: Pause on hover */
+.scroll-speed-slow:hover,
+.scroll-speed-medium:hover,
+.scroll-speed-fast:hover {
+  animation-play-state: paused;
+}
+
+.animate-scroll {
+  animation: scroll .01s linear infinite;
+}
+
+.animate-scroll:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scroll-fast {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-33.33%);
+  }
+}
+
+.animate-scroll-fast {
+  animation: scroll-fast 15s linear infinite;
+  will-change: transform;
+}
+
+.sponsor-scroll-container {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 20%,
+    black 80%,
+    transparent
+  );
+}
+
+.sponsor-scroll-container:hover .animate-scroll-fast {
+  animation-play-state: paused;
+}
