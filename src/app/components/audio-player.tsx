@@ -144,7 +144,7 @@ export default function AudioPlayer() {
           </Button>
         </div>
         <div className="mt-4 text-center text-sm text-amber-700">
-          <p>Transmitiendo en vivo desde Miami, Florida</p>
+          <p>Transmitiendo en vivo desde North Carolina</p>
         </div>
       </div>
 

@@ -17,7 +17,7 @@ import Link from "next/link"
 // import ScheduleSection from "@/components/schedule-section"
 // import FeaturedContent from "@/components/featured-content"
 import { useState, useEffect, useRef } from "react"
-// import SponsorsSection from "./components/SponsorsSection"
+import SponsorsSection from "./components/SponsorsSection"
 import { toast, Toaster } from 'react-hot-toast'
 
 export default function Home() {
@@ -273,7 +273,7 @@ export default function Home() {
                   />
                 </div>
                 <div className="mt-3 text-center text-xs text-primary-600 md:text-sm">
-                  <p>Transmitiendo en vivo desde Miami, Florida</p>
+                  <p>Transmitiendo en vivo desde North Carolina</p>
                 </div>
               </div>
 
@@ -423,7 +423,7 @@ export default function Home() {
               </div>
 
               {/* Sponsors Section */}
-              {/* <SponsorsSection /> */}
+              <SponsorsSection />
             </div>
           </div>
         </section>

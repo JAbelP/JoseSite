@@ -5,55 +5,50 @@ import React from "react"
 
 const sponsors = [
   {
-    name: "Panadería El Buen Pan",
-    logo: "/sponsors/panaderia.png",
-    url: "#"
+    name: "Maná Escondido Café",
+    logo: "/cafeLogo.jpg",
+    url: "https://www.manabostoncafe.com/"
   },
   {
-    name: "Tienda La Esperanza",
-    logo: "/sponsors/esperanza.png",
-    url: "#"
+    name: "Iglesia Hispana Macedonia",
+    logo: "/macedonia.png",
+    url: "https://www.ihmacedonia.org/"
   },
-  {
-    name: "Consultorio Vida",
-    logo: "/sponsors/vida.png",
-    url: "#"
-  },
-  {
-    name: "Restaurante Sabor Latino",
-    logo: "/sponsors/saborlatino.png",
-    url: "#"
-  }
+  // {
+  //   name: "Consultorio Vida",
+  //   logo: "/sponsors/vida.png",
+  //   url: "https://www.ihmacedonia.org/"
+  // },
 ]
 
 export default function SponsorsSection() {
   return (
-    <div className="bg-blue-50 py-8 md:py-12 rounded-2xl mx-2 md:mx-0 my-8 shadow overflow-hidden">
+    <div className="bg-blue-50 py-8 md:py-16 rounded-2xl mx-2 md:mx-0 my-8 shadow overflow-hidden">
       <div className="container mx-auto px-4">
-        <h2 className="mb-6 text-center font-serif text-2xl font-bold text-blue-900 md:text-3xl">
+        <h2 className="mb-8 text-center font-serif text-2xl font-bold text-blue-900 md:text-3xl">
           Nuestros Patrocinadores
         </h2>
         
         {/* Desktop Grid */}
-        <div className="hidden md:grid grid-cols-4 gap-8">
+        <div className="hidden md:grid grid-cols-2 gap-12 max-w-4xl mx-auto">
           {sponsors.map((sponsor) => (
             <a
               key={sponsor.name}
               href={sponsor.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex flex-col items-center bg-white rounded-lg shadow p-4 hover:shadow-lg transition"
+              className="flex flex-col items-center bg-white rounded-xl shadow-md p-8 hover:shadow-lg transition group"
             >
-              <div className="relative h-20 w-20 mb-2">
+              <div className="relative h-32 w-32 mb-4 transition-transform group-hover:scale-105">
                 <Image
                   src={sponsor.logo}
                   alt={sponsor.name}
                   fill
                   className="object-contain"
-                  sizes="80px"
+                  sizes="(min-width: 768px) 128px, 80px"
                 />
               </div>
-              <span className="text-blue-800 text-sm font-semibold text-center">
+              <span className="text-blue-800 text-lg font-semibold text-center">
                 {sponsor.name}
               </span>
             </a>
