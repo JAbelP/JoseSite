@@ -14,6 +14,16 @@ const sponsors = [
     logo: "/macedonia.png",
     url: "https://www.ihmacedonia.org/"
   },
+  {
+    name: "Ministerio TV",
+    logo: "/MinisterioTV.jpg",
+    url: "https://www.ministeriotv.com/"
+  },
+  {
+    name: "Ministerio Oasis En El Desierto Studio",
+    logo: "/Oasis.png",
+    url: "https://www.ministeriooasiseneldesiertostudio.com/"
+  },
   // {
   //   name: "Consultorio Vida",
   //   logo: "/sponsors/vida.png",
