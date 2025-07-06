@@ -20,6 +20,7 @@ import Link from "next/link"
 // import ScheduleSection from "@/components/schedule-section"
 // import FeaturedContent from "@/components/featured-content"
 import { useState, useEffect, useRef } from "react"
+import SponsorsSection from "./components/SponsorsSection"
 
 export default function Home() {
   const [isVideoVisible, setIsVideoVisible] = useState(true)
@@ -301,7 +302,7 @@ export default function Home() {
                 />
               </div>
               <div className="mt-3 text-center text-xs text-primary-600 md:text-sm">
-                <p>Transmitiendo en vivo desde Miami, Florida</p>
+                <p>Transmitiendo en vivo desde Raleigh, North Carolina</p>
               </div>
             </div>
 
@@ -448,6 +449,10 @@ export default function Home() {
                   <p className="text-xs text-primary-600">Grupo de Alabanza</p>
                 </div>
               </div>
+            </div>
+            {/*Sponsors*/}
+            <div>
+                <SponsorsSection/>
             </div>
           </div>
         </div>
