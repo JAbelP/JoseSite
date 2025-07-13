@@ -3,6 +3,7 @@ import "@/app/globals.css"
 import { Inter } from "next/font/google"
 import { ThemeProvider } from "@/app/components/theme-provider"
 import Script from "next/script"
+import Analytics from "./components/analytics"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -21,32 +22,21 @@ export default function RootLayout({
     <html lang="es" suppressHydrationWarning>
       <head>
          {/* Load gtag.js */}
-        <Script
+      <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-6GMMNJNS9D"
           strategy="afterInteractive"
         />
-
-        {/* Initialize gtag */}
-        <Script id="google-analytics" strategy="afterInteractive">
+        <Script id="gtag-init" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', 'G-6GMMNJNS9D');
           `}
-                  </Script>
+        </Script>
       </head>
       <body className={inter.className}>
-        {/* Google Tag Manager (noscript) */}
-        <noscript>
-          <iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-58VW7TXM"
-            height="0"
-            width="0"
-            style={{ display: "none", visibility: "hidden" }}
-          ></iframe>
-        </noscript>
-        {/* End Google Tag Manager (noscript) */}
+        <Analytics />
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           {children}
         </ThemeProvider>
