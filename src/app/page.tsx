@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Play,
@@ -13,23 +13,24 @@ import {
   VolumeX,
   ArrowUp,
   ChevronDown,
-} from "lucide-react"
-import { Button } from "@/app/components/ui/button"
-import Image from "next/image"
-import Link from "next/link"
+} from "lucide-react";
+import { Button } from "@/app/components/ui/button";
+import Image from "next/image";
+import Link from "next/link";
 // import ScheduleSection from "@/components/schedule-section"
 // import FeaturedContent from "@/components/featured-content"
-import { useState, useEffect, useRef, Suspense } from "react"
-import SponsorsSection from "./components/SponsorsSection"
+import { useState, useEffect, useRef, Suspense } from "react";
+import SponsorsSection from "./components/SponsorsSection";
 
 export default function Home() {
-  const [isVideoVisible, setIsVideoVisible] = useState(true)
-  const [isPlaying, setIsPlaying] = useState(true)
-  const [isMuted, setIsMuted] = useState(false)
-  const videoSectionRef = useRef<HTMLDivElement>(null)
-  const iframeRef = useRef<HTMLIFrameElement>(null)
-  const [isDonationDropdownOpen, setIsDonationDropdownOpen] = useState(false)
-  const [isHeroDonationDropdownOpen, setIsHeroDonationDropdownOpen] = useState(false)
+  const [isVideoVisible, setIsVideoVisible] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
+  const videoSectionRef = useRef<HTMLDivElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [isDonationDropdownOpen, setIsDonationDropdownOpen] = useState(false);
+  const [isHeroDonationDropdownOpen, setIsHeroDonationDropdownOpen] =
+    useState(false);
 
   const togglePlayPause = () => {
     if (iframeRef.current) {
@@ -37,13 +38,13 @@ export default function Home() {
         // Send message to iframe
         iframeRef.current.contentWindow?.postMessage(
           {
-            action: isPlaying ? 'pause' : 'play'
+            action: isPlaying ? "pause" : "play",
           },
-          'https://www.ministeriotv.com'
+          "https://www.ministeriotv.com"
         );
         setIsPlaying(!isPlaying);
       } catch (error) {
-        console.error('Error controlling playback:', error);
+        console.error("Error controlling playback:", error);
       }
     }
   };
@@ -54,13 +55,13 @@ export default function Home() {
         // Send message to iframe
         iframeRef.current.contentWindow?.postMessage(
           {
-            action: isMuted ? 'unmute' : 'mute'
+            action: isMuted ? "unmute" : "mute",
           },
-          'https://www.ministeriotv.com'
+          "https://www.ministeriotv.com"
         );
         setIsMuted(!isMuted);
       } catch (error) {
-        console.error('Error controlling volume:', error);
+        console.error("Error controlling volume:", error);
       }
     }
   };
@@ -68,76 +69,80 @@ export default function Home() {
   // Add message listener for iframe responses
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      if (event.origin === 'https://www.ministeriotv.com') {
+      if (event.origin === "https://www.ministeriotv.com") {
         // Handle any responses from the iframe if needed
-        console.log('Message from iframe:', event.data);
+        console.log("Message from iframe:", event.data);
       }
     };
 
-    window.addEventListener('message', handleMessage);
-    return () => window.removeEventListener('message', handleMessage);
-  }, [])
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsVideoVisible(entry.isIntersecting)
+        setIsVideoVisible(entry.isIntersecting);
       },
       {
         threshold: 0.1,
         rootMargin: "-50px 0px 0px 0px",
       }
-    )
+    );
 
     const currentRef = videoSectionRef.current;
     if (currentRef) {
-      observer.observe(currentRef)
+      observer.observe(currentRef);
     }
 
     return () => {
       if (currentRef) {
-        observer.unobserve(currentRef)
+        observer.unobserve(currentRef);
       }
-    }
-  }, [])
+    };
+  }, []);
 
   const scrollToVideo = () => {
-    const liveSection = document.getElementById("live-stream-section")
+    const liveSection = document.getElementById("live-stream-section");
     if (liveSection) {
-      liveSection.scrollIntoView({ behavior: "smooth" })
+      liveSection.scrollIntoView({ behavior: "smooth" });
     }
-  }
+  };
 
   const DonationDropdown = ({
     isOpen,
     onToggle,
     onClose,
   }: {
-    isOpen: boolean
-    onToggle: () => void
-    onClose: () => void
+    isOpen: boolean;
+    onToggle: () => void;
+    onClose: () => void;
   }) => {
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
-        const target = event.target as Element
+        const target = event.target as Element;
         if (!target.closest(".donation-dropdown")) {
-          onClose()
+          onClose();
         }
-      }
+      };
 
       if (isOpen) {
-        document.addEventListener("click", handleClickOutside)
+        document.addEventListener("click", handleClickOutside);
       }
 
       return () => {
-        document.removeEventListener("click", handleClickOutside)
-      }
-    }, [isOpen, onClose])
+        document.removeEventListener("click", handleClickOutside);
+      };
+    }, [isOpen, onClose]);
 
     return (
       <div className="donation-dropdown relative">
-        <Button className="w-full bg-secondary-500 text-white hover:bg-secondary-600 sm:w-auto" onClick={onToggle}>
-          Donar Ahora <Heart className="ml-2 h-4 w-4" /> <ChevronDown className="ml-1 h-3 w-3" />
+        <Button
+          className="w-full bg-secondary-500 text-white hover:bg-secondary-600 sm:w-auto"
+          onClick={onToggle}
+        >
+          Donar Ahora <Heart className="ml-2 h-4 w-4" />{" "}
+          <ChevronDown className="ml-1 h-3 w-3" />
         </Button>
 
         {isOpen && (
@@ -147,8 +152,8 @@ export default function Home() {
                 className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                 onClick={() => {
                   // Handle PayPal donation
-                  console.log("PayPal donation clicked")
-                  onClose()
+                  console.log("PayPal donation clicked");
+                  onClose();
                 }}
               >
                 💳 PayPal
@@ -157,8 +162,8 @@ export default function Home() {
                 className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                 onClick={() => {
                   // Handle CashApp donation
-                  console.log("CashApp donation clicked")
-                  onClose()
+                  console.log("CashApp donation clicked");
+                  onClose();
                 }}
               >
                 💰 CashApp
@@ -167,8 +172,8 @@ export default function Home() {
                 className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                 onClick={() => {
                   // Handle Zelle donation
-                  console.log("Zelle donation clicked")
-                  onClose()
+                  console.log("Zelle donation clicked");
+                  onClose();
                 }}
               >
                 🏦 Zelle
@@ -177,8 +182,8 @@ export default function Home() {
           </div>
         )}
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <Suspense>
@@ -193,7 +198,9 @@ export default function Home() {
             <div className="flex items-center">
               <Radio className="mr-3 h-6 w-6 text-white" />
               <div className="text-white">
-                <h3 className="text-sm font-semibold md:text-base">Radio Alaba A Dios</h3>
+                <h3 className="text-sm font-semibold md:text-base">
+                  Radio Alaba A Dios
+                </h3>
                 <p className="text-xs text-primary-100">Transmisión En Vivo</p>
               </div>
             </div>
@@ -205,7 +212,11 @@ export default function Home() {
                 className="h-8 w-8 bg-white/10 text-white hover:bg-white/20 md:h-10 md:w-10"
                 onClick={togglePlayPause}
               >
-                {isPlaying ? <Radio className="h-4 w-4 md:h-5 md:w-5" /> : <Play className="h-4 w-4 md:h-5 md:w-5" />}
+                {isPlaying ? (
+                  <Radio className="h-4 w-4 md:h-5 md:w-5" />
+                ) : (
+                  <Play className="h-4 w-4 md:h-5 md:w-5" />
+                )}
               </Button>
 
               <Button
@@ -214,7 +225,11 @@ export default function Home() {
                 className="h-8 w-8 bg-white/10 text-white hover:bg-white/20 md:h-10 md:w-10"
                 onClick={toggleMute}
               >
-                {isMuted ? <VolumeX className="h-4 w-4 md:h-5 md:w-5" /> : <Volume2 className="h-4 w-4 md:h-5 md:w-5" />}
+                {isMuted ? (
+                  <VolumeX className="h-4 w-4 md:h-5 md:w-5" />
+                ) : (
+                  <Volume2 className="h-4 w-4 md:h-5 md:w-5" />
+                )}
               </Button>
 
               <Button
@@ -246,15 +261,21 @@ export default function Home() {
                 />
               </div>
             </div>
-            <h1 className="mb-1 font-serif text-3xl font-bold text-white md:mb-2 md:text-6xl">Radio Alaba A Dios </h1>
-            <p className="mb-6 text-lg text-secondary-200 md:mb-8 md:text-2xl">La Voz de Fe y Esperanza</p>
+            <h1 className="mb-1 font-serif text-3xl font-bold text-white md:mb-2 md:text-6xl">
+              Radio Alaba A Dios{" "}
+            </h1>
+            <p className="mb-6 text-lg text-secondary-200 md:mb-8 md:text-2xl">
+              La Voz de Fe y Esperanza
+            </p>
             <div className="flex w-full max-w-xs flex-col gap-3 sm:max-w-none sm:flex-row sm:justify-center sm:gap-4">
               <Button
                 className="w-full bg-secondary-500 text-white hover:bg-secondary-600 sm:w-auto"
                 onClick={() => {
-                  const liveSection = document.getElementById("live-stream-section")
+                  const liveSection = document.getElementById(
+                    "live-stream-section"
+                  );
                   if (liveSection) {
-                    liveSection.scrollIntoView({ behavior: "smooth" })
+                    liveSection.scrollIntoView({ behavior: "smooth" });
                   }
                 }}
               >
@@ -262,7 +283,9 @@ export default function Home() {
               </Button>
               <DonationDropdown
                 isOpen={isHeroDonationDropdownOpen}
-                onToggle={() => setIsHeroDonationDropdownOpen(!isHeroDonationDropdownOpen)}
+                onToggle={() =>
+                  setIsHeroDonationDropdownOpen(!isHeroDonationDropdownOpen)
+                }
                 onClose={() => setIsHeroDonationDropdownOpen(false)}
               />
             </div>
@@ -270,7 +293,10 @@ export default function Home() {
         </section>
 
         {/* Live Stream Section */}
-        <section id="live-stream-section" className="bg-primary-100 py-8 md:py-12">
+        <section
+          id="live-stream-section"
+          className="bg-primary-100 py-8 md:py-12"
+        >
           <div className="container mx-auto px-4">
             <div className="mx-auto max-w-4xl">
               <h2 className="mb-6 text-center font-serif text-2xl font-bold text-primary-700 md:text-3xl">
@@ -278,7 +304,16 @@ export default function Home() {
               </h2>
 
               {/* Radio Stream */}
-              <div ref={videoSectionRef} className="mb-8 rounded-xl bg-white p-4 shadow-lg md:p-6">
+              <div
+                ref={videoSectionRef}
+                className="mb-8 rounded-xl bg-white p-4 shadow-lg md:p-6"
+                onClick={() => {
+                  window.gtag?.("event", "click", {
+                    event_category: "video-section",
+                    event_label: "Radio Alaba A Dios - En Vivo",
+                  });
+                }}
+              >
                 <h3 className="mb-4 text-center font-serif text-xl font-bold text-primary-700 md:text-2xl">
                   Radio Alaba A Dios - En Vivo
                 </h3>
@@ -289,7 +324,7 @@ export default function Home() {
                       maxWidth: "640px",
                       width: "100%",
                       display: "block",
-                      margin: "auto"
+                      margin: "auto",
                     }}
                     src="https://www.ministeriotv.com/home/ejwM/205"
                     width="640"
@@ -349,8 +384,8 @@ export default function Home() {
                       Programación Centrada en Cristo
                     </h3>
                     <p className="text-sm text-primary-600 md:text-base">
-                      Todos nuestros programas tienen como fundamento las enseñanzas de Jesucristo y los valores del
-                      Evangelio.
+                      Todos nuestros programas tienen como fundamento las
+                      enseñanzas de Jesucristo y los valores del Evangelio.
                     </p>
                   </div>
 
@@ -363,8 +398,8 @@ export default function Home() {
                       Comunidad y Comunión Fraternal
                     </h3>
                     <p className="text-sm text-primary-600 md:text-base">
-                      Fomentamos la unidad y el apoyo mutuo entre los creyentes, creando espacios de comunión y
-                      crecimiento.
+                      Fomentamos la unidad y el apoyo mutuo entre los creyentes,
+                      creando espacios de comunión y crecimiento.
                     </p>
                   </div>
 
@@ -377,8 +412,8 @@ export default function Home() {
                       Verdad Bíblica y Discipulado
                     </h3>
                     <p className="text-sm text-primary-600 md:text-base">
-                      Nos comprometemos a enseñar fielmente la Palabra de Dios y a equipar a los creyentes para vivir su
-                      fe.
+                      Nos comprometemos a enseñar fielmente la Palabra de Dios y
+                      a equipar a los creyentes para vivir su fe.
                     </p>
                   </div>
                 </div>
@@ -401,8 +436,12 @@ export default function Home() {
                         className="h-full w-full object-cover"
                       />
                     </div>
-                    <h3 className="font-medium text-primary-800">Marcos Witt</h3>
-                    <p className="text-xs text-primary-600">Alabanza y Adoración</p>
+                    <h3 className="font-medium text-primary-800">
+                      Marcos Witt
+                    </h3>
+                    <p className="text-xs text-primary-600">
+                      Alabanza y Adoración
+                    </p>
                   </div>
 
                   {/* Artist 2 */}
@@ -416,8 +455,12 @@ export default function Home() {
                         className="h-full w-full object-cover"
                       />
                     </div>
-                    <h3 className="font-medium text-primary-800">Jesús Adrián Romero</h3>
-                    <p className="text-xs text-primary-600">Música Contemporánea</p>
+                    <h3 className="font-medium text-primary-800">
+                      Jesús Adrián Romero
+                    </h3>
+                    <p className="text-xs text-primary-600">
+                      Música Contemporánea
+                    </p>
                   </div>
 
                   {/* Artist 3 */}
@@ -431,7 +474,9 @@ export default function Home() {
                         className="h-full w-full object-cover"
                       />
                     </div>
-                    <h3 className="font-medium text-primary-800">Nancy Cintrón</h3>
+                    <h3 className="font-medium text-primary-800">
+                      Nancy Cintrón
+                    </h3>
                     <p className="text-xs text-primary-600">Adoración</p>
                   </div>
 
@@ -446,14 +491,18 @@ export default function Home() {
                         className="h-full w-full object-cover"
                       />
                     </div>
-                    <h3 className="font-medium text-primary-800">Miel San Marcos</h3>
-                    <p className="text-xs text-primary-600">Grupo de Alabanza</p>
+                    <h3 className="font-medium text-primary-800">
+                      Miel San Marcos
+                    </h3>
+                    <p className="text-xs text-primary-600">
+                      Grupo de Alabanza
+                    </p>
                   </div>
                 </div>
               </div>
               {/*Sponsors*/}
               <div>
-                  <SponsorsSection/>
+                <SponsorsSection />
               </div>
             </div>
           </div>
@@ -492,14 +541,19 @@ export default function Home() {
         {/* Call to Action Section */}
         <section className="bg-gradient-to-r from-primary-600 to-primary-800 py-10 text-white md:py-16">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="mb-3 font-serif text-2xl font-bold md:mb-4 md:text-4xl">Apoya Nuestra Misión</h2>
+            <h2 className="mb-3 font-serif text-2xl font-bold md:mb-4 md:text-4xl">
+              Apoya Nuestra Misión
+            </h2>
             <p className="mx-auto mb-6 max-w-2xl text-base md:mb-8 md:text-lg">
-              Tu apoyo nos permite continuar llevando el mensaje de fe y esperanza a nuestra comunidad hispana.
+              Tu apoyo nos permite continuar llevando el mensaje de fe y
+              esperanza a nuestra comunidad hispana.
             </p>
             <div className="flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
               <DonationDropdown
                 isOpen={isDonationDropdownOpen}
-                onToggle={() => setIsDonationDropdownOpen(!isDonationDropdownOpen)}
+                onToggle={() =>
+                  setIsDonationDropdownOpen(!isDonationDropdownOpen)
+                }
                 onClose={() => setIsDonationDropdownOpen(false)}
               />
               <Button
@@ -510,13 +564,19 @@ export default function Home() {
               </Button>
             </div>
             <div className="mt-8 grid grid-cols-2 gap-4 sm:flex sm:flex-wrap sm:justify-center sm:gap-6 md:mt-10">
-              <Link href="#" className="flex items-center justify-center text-white hover:text-secondary-200">
+              <Link
+                href="#"
+                className="flex items-center justify-center text-white hover:text-secondary-200"
+              >
                 <Facebook className="mr-2 h-5 w-5" /> Facebook
               </Link>
               {/* <Link href="#" className="flex items-center justify-center text-white hover:text-secondary-200">
                    <Twitter className="mr-2 h-5 w-5" /> Twitter 
                   </Link> */}
-              <Link href="#" className="flex items-center justify-center text-white hover:text-secondary-200">
+              <Link
+                href="#"
+                className="flex items-center justify-center text-white hover:text-secondary-200"
+              >
                 <Instagram className="mr-2 h-5 w-5" /> Instagram
               </Link>
               {/* <Link href="#" className="flex items-center justify-center text-white hover:text-secondary-200">
@@ -529,9 +589,12 @@ export default function Home() {
         {/* Footer */}
         <footer className="bg-primary-900 py-6 text-primary-200 md:py-8">
           <div className="container mx-auto px-4 text-center">
-            <p className="mb-3 text-sm md:mb-4 md:text-base">Radio Alaba A Dios - En Todo Tiempo Alaba a Dios</p>
+            <p className="mb-3 text-sm md:mb-4 md:text-base">
+              Radio Alaba A Dios - En Todo Tiempo Alaba a Dios
+            </p>
             <p className="text-xs md:text-sm">
-              © {new Date().getFullYear()} Radio Alaba A Dios . Todos los derechos reservados.
+              © {new Date().getFullYear()} Radio Alaba A Dios . Todos los
+              derechos reservados.
             </p>
             <p className="mt-2 text-xs">
               <Link href="#" className="hover:text-white">
@@ -546,5 +609,5 @@ export default function Home() {
         </footer>
       </main>
     </Suspense>
-  )
+  );
 }
