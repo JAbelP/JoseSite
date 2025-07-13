@@ -4,6 +4,7 @@ import { Inter } from "next/font/google"
 import { ThemeProvider } from "@/app/components/theme-provider"
 import Script from "next/script"
 import Analytics from "./components/analytics"
+import { Suspense } from "react"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -36,7 +37,10 @@ export default function RootLayout({
         </Script>
       </head>
       <body className={inter.className}>
-        <Analytics />
+        {/* Wrap Analytics in Suspense if it uses useSearchParams */}
+        <Suspense>
+          <Analytics />
+        </Suspense>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           {children}
         </ThemeProvider>
