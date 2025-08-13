@@ -21,63 +21,26 @@ import Link from "next/link";
 // import FeaturedContent from "@/components/featured-content"
 import { useState, useEffect, useRef, Suspense } from "react";
 import SponsorsSection from "./components/SponsorsSection";
+import RadioPlayer, { RadioPlayerRef } from "./components/RadioPlayer";
 
 export default function Home() {
   const [isVideoVisible, setIsVideoVisible] = useState(true);
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const videoSectionRef = useRef<HTMLDivElement>(null);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const radioPlayerRef = useRef<RadioPlayerRef>(null);
   const [isDonationDropdownOpen, setIsDonationDropdownOpen] = useState(false);
   const [isHeroDonationDropdownOpen, setIsHeroDonationDropdownOpen] =
     useState(false);
 
   const togglePlayPause = () => {
-    if (iframeRef.current) {
-      try {
-        // Send message to iframe
-        iframeRef.current.contentWindow?.postMessage(
-          {
-            action: isPlaying ? "pause" : "play",
-          },
-          "https://www.ministeriotv.com"
-        );
-        setIsPlaying(!isPlaying);
-      } catch (error) {
-        console.error("Error controlling playback:", error);
-      }
-    }
+    radioPlayerRef.current?.togglePlay();
   };
 
   const toggleMute = () => {
-    if (iframeRef.current) {
-      try {
-        // Send message to iframe
-        iframeRef.current.contentWindow?.postMessage(
-          {
-            action: isMuted ? "unmute" : "mute",
-          },
-          "https://www.ministeriotv.com"
-        );
-        setIsMuted(!isMuted);
-      } catch (error) {
-        console.error("Error controlling volume:", error);
-      }
-    }
+    radioPlayerRef.current?.toggleMute();
   };
 
-  // Add message listener for iframe responses
-  useEffect(() => {
-    const handleMessage = (event: MessageEvent) => {
-      if (event.origin === "https://www.ministeriotv.com") {
-        // Handle any responses from the iframe if needed
-        console.log("Message from iframe:", event.data);
-      }
-    };
-
-    window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
-  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -306,38 +269,31 @@ export default function Home() {
               {/* Radio Stream */}
               <div
                 ref={videoSectionRef}
-                className="mb-8 rounded-xl bg-white p-4 shadow-lg md:p-6"
-                onClick={() => {
-                  window.gtag?.("event", "click", {
-                    event_category: "video-section",
-                    event_label: "Radio Alaba A Dios - En Vivo",
-                  });
-                }}
+                className="mb-8"
               >
-                <h3 className="mb-4 text-center font-serif text-xl font-bold text-primary-700 md:text-2xl">
+                <h3 className="mb-6 text-center font-serif text-2xl font-bold text-primary-700 md:text-3xl">
                   Radio Alaba A Dios - En Vivo
                 </h3>
-                <div className="relative overflow-hidden rounded-lg bg-black">
-                  <iframe
-                    ref={iframeRef}
-                    style={{
-                      maxWidth: "640px",
-                      width: "100%",
-                      display: "block",
-                      margin: "auto",
-                    }}
-                    src="https://www.ministeriotv.com/home/ejwM/205"
-                    width="640"
-                    height="360"
-                    frameBorder="0"
-                    scrolling="no"
-                    allowFullScreen
-                    allow="autoplay"
-                    title="Radio Alaba A Dios  - Transmisión En Vivo"
-                    className="w-full"
-                  />
-                </div>
-                <div className="mt-3 text-center text-xs text-primary-600 md:text-sm">
+                <RadioPlayer
+                  ref={radioPlayerRef}
+                  stream="https://panel.streamenviron.com:8066/stream.mp3"
+                  streamtype="mp3"
+                  radioid="us.alabaadios"
+                  radioimg="https://cdn.onlineradiobox.com/img/l/2/71602.v5.png"
+                  radioname="Radio Alaba a Dios"
+                  onPlayStateChange={(playing) => {
+                    setIsPlaying(playing);
+                    if (playing) {
+                      window.gtag?.("event", "play", {
+                        event_category: "radio",
+                        event_label: "Radio Alaba A Dios - En Vivo",
+                      });
+                    }
+                  }}
+                  onMuteStateChange={(muted) => setIsMuted(muted)}
+                  className="mx-auto max-w-2xl"
+                />
+                <div className="mt-4 text-center text-sm text-primary-600">
                   <p>Transmitiendo en vivo desde Raleigh, North Carolina</p>
                 </div>
               </div>
