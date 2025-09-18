@@ -27,6 +27,8 @@ export default function Home() {
   const [isVideoVisible, setIsVideoVisible] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  // Add a volume slider for granular control
+  const [volume, setVolume] = useState(1);
   const videoSectionRef = useRef<HTMLDivElement>(null);
   const radioPlayerRef = useRef<RadioPlayerRef>(null);
   const [isDonationDropdownOpen, setIsDonationDropdownOpen] = useState(false);
@@ -41,6 +43,11 @@ export default function Home() {
     radioPlayerRef.current?.toggleMute();
   };
 
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVolume = Number(e.target.value);
+    setVolume(newVolume);
+    radioPlayerRef.current?.setVolume(newVolume);
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -203,6 +210,24 @@ export default function Home() {
               >
                 <ArrowUp className="mr-1 h-4 w-4 md:mr-2" />
               </Button>
+
+              {/* Volume slider */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-white">Vol</span>
+                <input
+                  type="range"
+                  min={0}
+                  max={1}
+                  step={0.01}
+                  value={volume}
+                  onChange={handleVolumeChange}
+                  className="w-24 h-2 accent-primary-600"
+                  aria-label="Volumen"
+                />
+                <span className="text-xs text-white">
+                  {Math.round(volume * 100)}
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -267,10 +292,7 @@ export default function Home() {
               </h2>
 
               {/* Radio Stream */}
-              <div
-                ref={videoSectionRef}
-                className="mb-8"
-              >
+              <div ref={videoSectionRef} className="mb-8">
                 <h3 className="mb-6 text-center font-serif text-2xl font-bold text-primary-700 md:text-3xl">
                   Radio Alaba A Dios - En Vivo
                 </h3>
@@ -281,6 +303,7 @@ export default function Home() {
                   radioid="us.alabaadios"
                   radioimg="https://cdn.onlineradiobox.com/img/l/2/71602.v5.png"
                   radioname="Radio Alaba a Dios"
+                  volume={volume}
                   onPlayStateChange={(playing) => {
                     setIsPlaying(playing);
                     if (playing) {
@@ -293,6 +316,34 @@ export default function Home() {
                   onMuteStateChange={(muted) => setIsMuted(muted)}
                   className="mx-auto max-w-2xl"
                 />
+                {/* Add Volume Controls */}
+                <div className="mt-4 flex items-center justify-center gap-4">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={toggleMute}
+                    className="text-primary-600 hover:text-primary-700"
+                  >
+                    {isMuted ? (
+                      <VolumeX className="h-5 w-5" />
+                    ) : (
+                      <Volume2 className="h-5 w-5" />
+                    )}
+                  </Button>
+                  <input
+                    type="range"
+                    min={0}
+                    max={1}
+                    step={0.01}
+                    value={volume}
+                    onChange={handleVolumeChange}
+                    className="w-48 h-2 bg-primary-200 rounded-lg appearance-none cursor-pointer"
+                    aria-label="Control de volumen"
+                  />
+                  <span className="text-sm text-primary-600 w-8">
+                    {Math.round(volume * 100)}%
+                  </span>
+                </div>
                 <div className="mt-4 text-center text-sm text-primary-600">
                   <p>Transmitiendo en vivo desde Raleigh, North Carolina</p>
                 </div>
